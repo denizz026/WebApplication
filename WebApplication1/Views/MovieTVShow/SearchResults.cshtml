@@ -1,0 +1,44 @@
+﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@model WebApplication1.Models.MovieTVShowViewModel
+
+<h3 style="margin-top:20px">Movies</h3>
+<div class="movie-grid">
+    @if (Model.Movies != null && Model.Movies.Any())
+    {
+        @foreach (var movie in Model.Movies)
+        {
+            <div class="movie-card">
+                <a href="@Url.Action("MovieDetail", "Comment", new { id = movie.Id })">
+                    <img src="~/images/movies/@movie.PosterUrl" alt="@movie.Title" />
+                    <h3>@movie.Title</h3>
+                    <p>IMDb: @movie.Rating</p>
+                </a>
+            </div>
+        }
+    }
+    else
+    {
+        <p style="color:red">No movies found for your search.</p>
+    }
+</div>
+
+<h3>TV Shows</h3>
+<div class="tvshow-grid">
+    @if (Model.TVShows != null && Model.TVShows.Any())
+    {
+        @foreach (var tvShow in Model.TVShows)
+        {
+            <div class="tvshow-card">
+                <a href="@Url.Action("TVShowDetail", "Comment", new { id = tvShow.Id })">
+                    <img src="~/images/tvshows/@tvShow.PosterUrl" alt="@tvShow.Title" />
+                    <h3>@tvShow.Title</h3>
+                    <p>IMDb: @tvShow.Rating</p>
+                </a>
+            </div>
+        }
+    }
+    else
+    {
+        <p style="color:red" >No TV shows found for your search.</p>
+    }
+</div>
