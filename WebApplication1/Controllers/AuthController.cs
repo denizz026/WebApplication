@@ -96,7 +96,7 @@ public class AuthController : Controller
 
         // Aktivasyon süreci için kullanıcıya bilgi mesajı göster
         TempData["SuccessMessage"] = "Kaydınız oluşturuldu. Lütfen hesabınızı aktif hale getirmek için e-postanızı kontrol edin.";
-        await _log.AddLog(user.Email, "Kayıt", "Aktivasyon linki gönderildi");
+        await _log.AddLog( "Kayıt", $"{user.Email}Aktivasyon linki gönderildi");
 
         // Login sayfasına yönlendirme
         return RedirectToAction("Login", "Auth");
@@ -115,6 +115,7 @@ public class AuthController : Controller
             {
                 // Kullanıcı bulunamadı veya şifre yanlış
                 ViewData["ErrorMessage"] = "Geçersiz kullanıcı adı veya şifre.";
+                await _log.AddLog("Giriş", $"{model.Email} Geçersiz giriş denemesi");
                 return View(model);
             }
 
@@ -122,6 +123,7 @@ public class AuthController : Controller
             if (!user.IsActive)
             {
                 ViewData["ErrorMessage"] = "Hesabınız henüz aktif değil. Lütfen e-postanızı kontrol ederek hesabınızı aktif hale getirin.";
+                await _log.AddLog("Giriş", $"{model.Email} Geçersiz giriş denemesi");
                 return View(model);
             }
 
@@ -135,7 +137,7 @@ public class AuthController : Controller
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-
+            await _log.AddLog("Giriş", $"{model.Email} Giriş yapıldı");
             return RedirectToAction("Index", "Home");
         }
 

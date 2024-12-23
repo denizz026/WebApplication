@@ -13,84 +13,13 @@ namespace WebApplication1.Controllers
         {
             c = context;
         }
-
-        [HttpPost]
-        public async Task LoginLog(string Mail, string Role, bool Status)
+        [HttpGet]
+        public IActionResult Loginlog()
         {
-            if (Role == "Admin")
-            {
-                if (Status)
-                {
-                    c.Logs.Add(new Logs
-                    {
-                        LogCategory = "AdminLogin",
-                        Activity = "Admin " + Mail + " sisteme giris yaptı",
-                        LogDate = DateTime.Now
-                    });
-                    await c.SaveChangesAsync();
-                }
-                else
-                {
-                    c.Logs.Add(new Logs
-                    {
-                        LogCategory = "AdminLogin",
-                        Activity = Mail + " sisteme giris yapmaya çalıştı",
-                        LogDate = DateTime.Now
-                    });
-                    await c.SaveChangesAsync();
-                }
-
-            }
-            else if (Role == "User")
-            {
-                if (Status)
-                {
-                    c.Logs.Add(new Logs
-                    {
-                        LogCategory = "UserLogin",
-                        Activity = "User " + Mail + " sisteme giris yaptı",
-                        LogDate = DateTime.Now
-                    });
-                    await c.SaveChangesAsync();
-                }
-                else
-                {
-                    c.Logs.Add(new Logs
-                    {
-                        LogCategory = "UserLogin",
-                        Activity = Mail + " sisteme giris yapmaya çalıştı",
-                        LogDate = DateTime.Now
-                    });
-                    await c.SaveChangesAsync();
-                }
-
-            }
-            else if (Role == "Seller")
-            {
-                if (Status)
-                {
-                    c.Logs.Add(new Logs
-                    {
-                        LogCategory = "SellerLogin",
-                        Activity = "Seller " + Mail + " sisteme giris yaptı",
-                        LogDate = DateTime.Now
-                    });
-                    await c.SaveChangesAsync();
-                }
-                else
-                {
-                    c.Logs.Add(new Logs
-                    {
-                        LogCategory = "SellerLogin",
-                        Activity = Mail + " sisteme giris yapmaya çalıştı",
-                        LogDate = DateTime.Now
-                    });
-                    await c.SaveChangesAsync();
-                }
-            }
+            return View(c.Logs.ToList());
         }
 
-        public async Task AddLog(string mail, string Category, string Activity)
+        public async Task AddLog( string Category, string Activity)
         {
             c.Logs.Add(new Logs
             {

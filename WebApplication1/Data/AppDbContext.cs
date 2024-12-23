@@ -14,7 +14,9 @@ namespace WebApplication1.Data
         public DbSet<User> Users { get; set; }
 
         public DbSet<Comment> Comments { get; set; }
+
         public DbSet<Token> Tokens { get; set; }
+
         public DbSet<Logs> Logs { get; set; }
 
 
