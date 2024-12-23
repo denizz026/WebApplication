@@ -43,8 +43,9 @@ public class AuthController : Controller
             return View(model); // Eğer ModelState geçerli değilse, formu tekrar göster
         }
 
-        // E-posta adresinin zaten kullanılıp kullanılmadığını kontrol et
-        if (await _context.Users.AnyAsync(u => u.Email == model.Email))
+        // E-posta adresinin zaten kullanılıp kullanılmadığını kontrol et 
+        //kullanıcı kayıtlı ve aktif ise hata veriyoruz
+        if (await _context.Users.AnyAsync(u => u.Email == model.Email && u.IsActive==true))
         {
             ModelState.AddModelError("Email", "Bu e-posta adresi zaten kayıtlı.");
             TempData["ErrorMessage"] = "Bu e-posta adresi zaten kullanılıyor.";
@@ -86,9 +87,7 @@ public class AuthController : Controller
             $@"Merhaba {user.Username},
 
         Hesabınızı etkinleştirmek için aşağıdaki bağlantıyı kullanabilirsiniz. Bu bağlantı sizi hesap doğrulama sayfasına yönlendirecektir:
-
         {verificationUrl}
-
         Eğer bağlantıya tıklayamıyorsanız, lütfen yukarıdaki URL'yi tarayıcınıza kopyalayıp yapıştırın.
 
         Teşekkür ederiz,
@@ -145,7 +144,6 @@ public class AuthController : Controller
     }
 
 
-
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -158,54 +156,7 @@ public class AuthController : Controller
         return View();
     }
 
-   
-
-
-    public async Task SignInActivation(User d)
-    {
-        if (d is null)
-        {
-            throw new ArgumentNullException(nameof(d));
-        }
-        var token = new Token
-        {
-            Value = Guid.NewGuid().ToString(),
-            ExpirationDate = DateTime.Now.AddMinutes(15), // 15 dakika
-            IsActive = true, // Token geçerli
-            User = d, // Token, bu kullanıcıya atanacak
-        };
-
-        if (await _context.Tokens.AnyAsync(x => x.User.UserId == d.UserId))
-        {
-            var oldToken = await _context.Tokens.FirstOrDefaultAsync(x => x.UserId == d.UserId);
-            _context.Tokens.Remove(oldToken);
-        }
-        _context.Tokens.Add(token);
-        await _context.SaveChangesAsync();
-
-        // Doğrulama URL'si oluştur
-        var verificationUrl = Url.Action("ActivateAccount", "Auth", new { token = token.Value }, Request.Scheme);
-
-        // E-posta gönder
-        await _emailService.SendEmailAsync(
-            d.Email,
-            "E-posta Doğrulama",
-            $@"Merhaba {d.Username},
-
-        Hesabınızı etkinleştirmek için aşağıdaki bağlantıyı kullanabilirsiniz. Bu bağlantı sizi hesap doğrulama sayfasına yönlendirecektir:
-
-        {verificationUrl}
-
-        Eğer bağlantıya tıklayamıyorsanız, lütfen yukarıdaki URL'yi tarayıcınıza kopyalayıp yapıştırın.
-
-        Teşekkür ederiz,
-        Destek Ekibiniz"
-        );
-
-        // Kullanıcıya bilgi mesajı ile Login sayfasına yönlendir
-        await _log.AddLog(d.Email, "Kayıt", "Aktifleştirme linki yeniden gönderildi");
-        TempData["SuccessMessage"] = "Kaydiniz olusturuldu. Lutfen hesabinizi aktif hale getirmek icin e-postanizi kontrol edin.";
-    }
+  
 
     [HttpPost]
     public async Task<IActionResult> ActivateAccount([FromBody] string token)
@@ -225,10 +176,14 @@ public class AuthController : Controller
             return Json(new { success = false });
         }
 
+        if(userToken.ExpirationDate < DateTime.Now)
+        {
+            return Json(new { success = false, message = "Token süresi dolmuş." });
+        }
+
         // Kullanıcıyı aktif hale getir ve token'ı geçersiz yap
         userToken.User.IsActive = true;
         userToken.IsActive = false;
-        userToken.ExpirationDate = DateTime.Now; // Token süresini hemen dolmuş olarak ayarla gerek olmayabiilir
 
         await _context.SaveChangesAsync();
 

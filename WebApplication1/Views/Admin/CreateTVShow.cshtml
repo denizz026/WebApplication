@@ -1,0 +1,36 @@
+﻿@model WebApplication1.Models.TVShow
+
+@{
+    ViewData["Title"] = "Create TV Show";
+}
+
+<h1>Create TV Show</h1>
+
+<form method="post">
+    <div class="form-group">
+        <label for="Title">Title</label>
+        <input type="text" class="form-control" id="Title" name="Title" value="@Model?.Title" />
+    </div>
+
+    <div class="form-group">
+        <label for="Description">Description</label>
+        <textarea class="form-control" id="Description" name="Description">@Model?.Description</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="Rating">Rating</label>
+        <input type="number" class="form-control" id="Rating" name="Rating" value="@Model?.Rating" />
+    </div>
+
+    <div class="form-group">
+        <label for="TrailerUrl">Trailer URL</label>
+        <input type="url" class="form-control" id="TrailerUrl" name="TrailerUrl" value="@Model?.TrailerUrl" />
+    </div>
+
+    <div class="form-group">
+        <label for="PosterUrl">Poster URL</label>
+        <input type="url" class="form-control" id="PosterUrl" name="PosterUrl" value="@Model?.PosterUrl" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>

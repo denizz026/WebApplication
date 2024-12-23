@@ -1,0 +1,167 @@
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Admin Paneli";
+}
+
+<link rel="stylesheet" href="~/css/adminPanel.css" /> <!-- CSS dosyasını buraya ekliyoruz -->
+
+<h1>@ViewData["Title"]</h1>
+
+<!-- Sekmelerle Kategorileri Ayırma -->
+<ul class="nav nav-tabs" id="adminTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="movies-tab" data-bs-toggle="tab" href="#movies" role="tab" aria-controls="movies" aria-selected="true">Filmler</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="tvshows-tab" data-bs-toggle="tab" href="#tvshows" role="tab" aria-controls="tvshows" aria-selected="false">Diziler</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="comments-tab" data-bs-toggle="tab" href="#comments" role="tab" aria-controls="comments" aria-selected="false">Yorumlar</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="users-tab" data-bs-toggle="tab" href="#users" role="tab" aria-controls="users" aria-selected="false">Kullanıcılar</a>
+    </li>
+   
+</ul>
+
+<div class="tab-content" id="adminTabContent">
+
+    <!-- Filmler -->
+    <div class="tab-pane fade show active" id="movies" role="tabpanel" aria-labelledby="movies-tab">
+        <h2>Filmler</h2>
+        <a class="btn btn-primary mb-3" href="@Url.Action("CreateMovie", "Admin")">Yeni Film Ekle</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ad</th>
+                    <th>Açıklama</th>
+                    <th>Rating</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var movie in Model.Movies)
+                {
+                    <tr>
+                        <td>@movie.Title</td>
+                        <td>@movie.Description</td>
+                        <td>@movie.Rating</td>
+                        <td>
+                            <a class="btn btn-warning" href="@Url.Action("EditMovie", "Admin", new { id = movie.Id })">Düzenle</a>
+                            <a class="btn btn-danger" href="@Url.Action("DeleteMovie", "Admin", new { id = movie.Id })">Sil</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Diziler -->
+    <div class="tab-pane fade" id="tvshows" role="tabpanel" aria-labelledby="tvshows-tab">
+        <h2>Diziler</h2>
+        <a class="btn btn-primary mb-3" href="@Url.Action("CreateTVShow", "Admin")">Yeni Dizi Ekle</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ad</th>
+                    <th>Açıklama</th>
+                    <th>Rating</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tvShow in Model.TVShows)
+                {
+                    <tr>
+                        <td>@tvShow.Title</td>
+                        <td>@tvShow.Description</td>
+                        <td>@tvShow.Rating</td>
+                        <td>
+                            <a class="btn btn-warning" href="@Url.Action("EditTVShow", "Admin", new { id = tvShow.Id })">Düzenle</a>
+                            <a class="btn btn-danger" href="@Url.Action("DeleteTVShow", "Admin", new { id = tvShow.Id })">Sil</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Yorumlar -->
+    <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+        <h2>Yorumlar</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Yazar</th>
+                    <th>İçerik</th>
+                    <th>Film/Dizi</th>
+                    <th>Rating</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var comment in Model.Comments)
+                {
+                    <tr>
+                        <td>@comment.Author</td>
+                        <td>@comment.Content</td>
+                        <td>@(comment.Movie != null ? comment.Movie.Title : comment.TVShow.Title)</td>
+                        <td>@comment.Rating</td>
+                        <td>
+                            <a class="btn btn-danger" href="javascript:void(0);" onclick="deleteComment(@comment.Id)">Sil</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Kullanıcılar -->
+    <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+        <h2>Kullanıcılar</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>aktif</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.Users)
+                {
+                    <tr>
+                        <td>@user.Username</td>
+                        <td>@user.Email</td>
+                        <td>@user.IsActive</td>
+
+                        <td>
+                            <a class="btn btn-danger" href="javascript:void(0);" onclick="deleteUser(@user.UserId)">Sil</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+    function deleteUser(userId) {
+        if (confirm("Bu kullanıcıyı silmek istediğinize emin misiniz?")) {
+            // Kullanıcıyı silmek için Admin controller'a yönlendir
+            window.location.href = '@Url.Action("DeleteUser", "Admin", new { id = "__id__" })'.replace("__id__", userId);
+        }
+    }
+    function deleteComment(commentId) {
+        if (confirm("Bu yorumu silmek istediğinize emin misiniz?")) {
+            // Silme işlemi için Admin controller'a yönlendir
+            window.location.href = '@Url.Action("DeleteComment", "Admin", new { id = "__id__" })'.replace("__id__", commentId);
+        }
+    }
+</script>
+
+<!-- Bootstrap JS -->
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

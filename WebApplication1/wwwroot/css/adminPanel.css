@@ -1,0 +1,54 @@
+﻿body {
+    background-color: #ffffff; /* Beyaz arka plan */
+    color: #000000; /* Siyah metin rengi */
+}
+
+.navbar, .nav-link, .nav-tabs {
+    background-color: #f8f9fa; /* Hafif gri arka plan */
+}
+
+    .nav-tabs .nav-link {
+        color: #000000; /* Sekme yazısı siyah olacak */
+    }
+
+        .nav-tabs .nav-link.active {
+            background-color: #007bff; /* Seçili sekmenin mavi rengi */
+            color: white; /* Seçili sekme metni beyaz */
+        }
+
+    .navbar .nav-link {
+        color: #000000; /* Navbar yazıları siyah */
+    }
+
+        .navbar .nav-link:hover {
+            color: #007bff; /* Navbar yazısı üzerine gelince mavi olacak */
+        }
+
+.table {
+    background-color: #ffffff; /* Tablo arka planı beyaz */
+    color: #000000; /* Tablo metni siyah */
+}
+
+    .table th, .table td {
+        border-top: 1px solid #ddd; /* Tablo kenarlıkları */
+    }
+
+.btn-primary, .btn-warning, .btn-danger {
+    color: #ffffff; /* Buton metni beyaz */
+}
+
+.btn-primary {
+    background-color: #007bff; /* Mavi buton */
+}
+
+.btn-warning {
+    background-color: #ffc107; /* Sarı buton */
+}
+
+.btn-danger {
+    background-color: #dc3545; /* Kırmızı buton */
+}
+
+    .btn-primary:hover, .btn-warning:hover, .btn-danger:hover {
+        opacity: 0.9; /* Buton üzerine gelince hafif opaklık */
+    }
